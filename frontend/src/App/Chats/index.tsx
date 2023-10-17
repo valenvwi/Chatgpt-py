@@ -1,16 +1,33 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import NavbarLeft from "../components/NavbarLeft";
-import ChatBox from "../components/ChatBox";
+import NavbarLeft from "./NavbarLeft";
+import ChatBox from "./ChatBox";
+import NewChat from "./NewChat";
+import { styled } from "@mui/material";
+import Header from "./Header";
+
+type MessageData = { content: string; role: string };
+
+const Container = styled("div")({
+  display: "flex",
+  flexDirection: "column",
+  height: "100%",
+});
+
+const Content = styled("div")({
+  flexGrow: 1,
+  display: "flex",
+  backgroundColor: "#eeeeee",
+});
 
 const Chats = () => {
   const baseURL = "http://localhost:8000/api";
 
-  const [chats, setChats] = useState([]);
-  const [chatId, setChatId] = useState(null);
-  const [messages, setMessages] = useState([]);
+  const [chats, setChats] = useState<{ id: string }[]>([]);
+  const [chatId, setChatId] = useState<string>();
+  const [messages, setMessages] = useState<MessageData[]>([]);
   const [inputMessage, setInputMessage] = useState("");
-  const messagesEndRef = useRef(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const [aiTyping, setAiTyping] = useState(false);
 
   useEffect(() => {
@@ -43,7 +60,7 @@ const Chats = () => {
     }
   };
 
-  const fetchMessages = async (chatId) => {
+  const fetchMessages = async (chatId: string) => {
     try {
       const response = await axios.get(`${baseURL}/chats/${chatId}/`);
       setMessages(response.data);
@@ -75,6 +92,7 @@ const Chats = () => {
             chat_id: chatId || undefined,
             message: inputMessage,
           });
+          console.log(response);
 
           // If there was no selected chat, set the selected chat to the newly created one
           if (!chatId) {
@@ -114,49 +132,30 @@ const Chats = () => {
     }
   };
 
-  function formatMessageContent(content) {
-    const sections = content.split(/(```[\s\S]*?```|`[\s\S]*?`)/g);
-    return sections
-      .map((section) => {
-        if (section.startsWith("```") && section.endsWith("```")) {
-          section = section.split("\n").slice(1).join("\n");
-          const code = section.substring(0, section.length - 3);
-          return `<pre><code class="code-block">${code}</code></pre>`;
-        } else if (section.startsWith("`") && section.endsWith("`")) {
-          const code = section.substring(1, section.length - 1);
-          return `<code class="inline-code">${code}</code>`;
-        } else {
-          return section.replace(/\n/g, "<br>");
-        }
-      })
-      .join("");
+  if (chats.length === 0) {
+    return (
+      <Container>
+        <Header createNewChat={createNewChat} />
+        <NewChat createNewChat={createNewChat} />
+      </Container>
+    );
   }
 
   return (
-    <div>
-      <h1>ChatGPT wiht Django and React</h1>
-      {chats.length === 0 ? (
-        <>
-          <h1>Start a new Chat</h1>
-          <button className="new-chat-button" onClick={createNewChat}>
-            <strong>+ New Chat</strong>
-          </button>
-        </>
-      ) : (
-        <>
-          <NavbarLeft chats={chats} chatId={chatId} setChatId={setChatId} />
-          <ChatBox
-            messages={messages}
-            inputMessage={inputMessage}
-            setInputMessage={setInputMessage}
-            sendMessage={sendMessage}
-            aiTyping={aiTyping}
-            messagesEndRef={messagesEndRef}
-            formatMessageContent={formatMessageContent}
-          />
-        </>
-      )}
-    </div>
+    <Container>
+      <Header createNewChat={createNewChat}/>
+      <Content>
+        <NavbarLeft chats={chats} chatId={chatId} setChatId={setChatId} />
+        <ChatBox
+          messages={messages}
+          inputMessage={inputMessage}
+          setInputMessage={setInputMessage}
+          sendMessage={sendMessage}
+          aiTyping={aiTyping}
+          messagesEndRef={messagesEndRef}
+        />
+      </Content>
+    </Container>
   );
 };
 
