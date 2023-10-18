@@ -1,19 +1,18 @@
 import { AppBar, IconButton, Toolbar, Typography } from "@mui/material";
-import AddBoxIcon from "@mui/icons-material/AddBox";
+import LogoutIcon from '@mui/icons-material/Logout';
+import { useAuth } from "../../service/Auth";
 
-type Props = {
-  createNewChat: () => void;
-};
+export default function Header() {
+  const { logout } = useAuth();
 
-export default function Header({ createNewChat }: Props) {
   return (
     <AppBar position="static">
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           ChatGPT wiht Django and React
         </Typography>
-        <IconButton color="inherit" onClick={createNewChat}>
-          <AddBoxIcon />
+        <IconButton color="inherit" onClick={logout}>
+          <LogoutIcon />
         </IconButton>
       </Toolbar>
     </AppBar>

@@ -47,7 +47,7 @@ class LogOutAPIView(APIView):
 
 class UserViewSet(viewsets.ViewSet):
     queryset = User.objects.all()
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     @user_list_docs
     def list(self, request):

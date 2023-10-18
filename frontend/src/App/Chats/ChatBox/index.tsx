@@ -7,6 +7,7 @@ import {
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import Message from "./Message";
+import { useEffect, useState } from "react";
 
 type MessageData = {
   content: string;
@@ -59,12 +60,15 @@ const ChatBox = ({
   aiTyping,
   messagesEndRef,
 }: Props) => {
+
+  const username =localStorage.getItem("username");
+
   return (
     <Container>
       <MessagesContainer>
         {messages.length === 0 && (
           <DefaultMessageContainer>
-            <p>Hi! Ask me anything!</p>
+            <p>Hi {username}! Ask me anything!</p>
           </DefaultMessageContainer>
         )}
         {messages.map((message, index) => (

@@ -29,6 +29,15 @@ const Chats = () => {
   const [inputMessage, setInputMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [aiTyping, setAiTyping] = useState(false);
+  // const [userId, setUserId] = useState<string>();
+
+  // useEffect(() => {
+  //   const userId = localStorage.getItem("user_id");
+  //   if (userId) {
+  //     setUserId(localStorage.getItem("user_id"));
+  //   }
+  // },[]);
+
 
   useEffect(() => {
     fetchChats();
@@ -77,6 +86,7 @@ const Chats = () => {
       {
         content: inputMessage,
         role: "user",
+        // owner: localStorage.getItem("user_id")
       },
     ]);
     setInputMessage("");
@@ -132,20 +142,20 @@ const Chats = () => {
     }
   };
 
-  if (chats.length === 0) {
-    return (
-      <Container>
-        <Header createNewChat={createNewChat} />
-        <NewChat createNewChat={createNewChat} />
-      </Container>
-    );
-  }
+  // if (chats.length === 0) {
+  //   return (
+  //     <Container>
+  //       <Header />
+  //       <NewChat createNewChat={createNewChat} />
+  //     </Container>
+  //   );
+  // }
 
   return (
     <Container>
-      <Header createNewChat={createNewChat}/>
+      <Header />
       <Content>
-        <NavbarLeft chats={chats} chatId={chatId} setChatId={setChatId} />
+        <NavbarLeft chats={chats} chatId={chatId} setChatId={setChatId} createNewChat={createNewChat} />
         <ChatBox
           messages={messages}
           inputMessage={inputMessage}

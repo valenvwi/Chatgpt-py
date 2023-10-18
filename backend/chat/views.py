@@ -5,6 +5,7 @@ import openai
 import os
 from dotenv import load_dotenv
 
+
 from .models import Chat, Message
 from .serializers import (
     ChatMessageSerializer,
@@ -16,6 +17,8 @@ from .serializers import (
 load_dotenv()
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
+
+# https://pypi.org/project/openai/
 class ChatGPT(APIView):
     def post(self, request, format=None):
         serializer = ChatMessageSerializer(data=request.data)
@@ -29,7 +32,7 @@ class ChatGPT(APIView):
             if chat_id:
                 chat = Chat.objects.get(id=chat_id)
             else:
-                chat = Chat.objects.create()
+                chat = Chat.objects.create(owner=request.user)
 
             if not request_message:
                 serializer = ChatSerializer(chat)
