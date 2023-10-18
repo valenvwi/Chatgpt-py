@@ -28,9 +28,13 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = User
-        fields = ("username",)
+        fields = ("username","id")
+
+    def get_id(self, obj):
+        return obj.id
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):

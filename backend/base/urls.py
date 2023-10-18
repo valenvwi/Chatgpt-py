@@ -10,6 +10,8 @@ from user.views import (
     RegisterView,
 )
 from user.views import UserViewSet
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 router = DefaultRouter()
@@ -27,3 +29,6 @@ urlpatterns = [
     path("api/logout/", LogOutAPIView.as_view(), name="logout"),
     path("api/register/", RegisterView.as_view(), name="register"),
 ] + router.urls
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

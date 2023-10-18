@@ -6,7 +6,7 @@ import NewChat from "./NewChat";
 import { styled } from "@mui/material";
 import Header from "./Header";
 
-type MessageData = { content: string; role: string };
+type MessageData = { content: string; role: string; owner: string | null };
 
 const Container = styled("div")({
   display: "flex",
@@ -90,12 +90,10 @@ const Chats = () => {
       },
     ]);
     setInputMessage("");
-
     setAiTyping(true);
 
     try {
-      // Simulate a delay for the typewriting effect
-      const delay = 1000 + Math.random() * 1000; // Random delay between 1-2 seconds
+      const delay = 1000 + Math.random() * 1000;
       setTimeout(async () => {
         try {
           const response = await axios.post(`${baseURL}/chats/`, {
@@ -104,7 +102,6 @@ const Chats = () => {
           });
           console.log(response);
 
-          // If there was no selected chat, set the selected chat to the newly created one
           if (!chatId) {
             setChatId(response.data.chat_id);
             setChats([{ id: response.data.chat_id }, ...chats]);
@@ -132,7 +129,9 @@ const Chats = () => {
 
   const createNewChat = async () => {
     try {
-      const response = await axios.post(`${baseURL}/chats/`);
+      const response = await axios.post(`${baseURL}/chats/`, {
+        owner: localStorage.getItem("user_id"),
+      });
       const newChat = response.data;
 
       setChats([newChat, ...chats]);

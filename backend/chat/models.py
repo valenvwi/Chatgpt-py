@@ -1,9 +1,11 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 import uuid
+from user.models import User
 
 class Chat(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="chat_owner")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

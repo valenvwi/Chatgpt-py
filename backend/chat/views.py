@@ -1,9 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 import openai
 import os
 from dotenv import load_dotenv
+from user.models import User
 
 
 from .models import Chat, Message
@@ -20,19 +22,28 @@ openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 # https://pypi.org/project/openai/
 class ChatGPT(APIView):
+    # permission_classes = [IsAuthenticated]
+    # print("authenticated status: ",IsAuthenticated)
+
     def post(self, request, format=None):
         serializer = ChatMessageSerializer(data=request.data)
         if serializer.is_valid():
             request_message = serializer.validated_data.get('message', None)
             chat_id = serializer.validated_data.get('chat_id', None)
+
             print(request_message)
             print("Api key: ",openai.api_key)
             print("Chat id: ",chat_id)
 
+            print("Request user: ",request)
+
             if chat_id:
                 chat = Chat.objects.get(id=chat_id)
             else:
-                chat = Chat.objects.create(owner=request.user)
+                owner_id = serializer.validated_data.get('owner', None)
+                owner = User.objects.get(id=owner_id)
+                print("Owner: ",owner)
+                chat = Chat.objects.create(owner=owner)
 
             if not request_message:
                 serializer = ChatSerializer(chat)
