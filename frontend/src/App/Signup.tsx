@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 
 const Signup = () => {
-  const { register } = useAuth();
+  const { signup, login } = useAuth();
   const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
@@ -22,7 +22,7 @@ const Signup = () => {
     },
     validate: (values) => {
       const errors: Partial<typeof values> = {};
-      if (!values.username) {
+      if (!values.username || values.username.trim() === "") {
         errors.username = "Required";
       }
       if (!values.password) {
@@ -41,7 +41,7 @@ const Signup = () => {
     },
     onSubmit: async (values) => {
       const { username, password } = values;
-      const status = await register(username, password);
+      const status = await signup(username, password);
       if (status === 409) {
         formik.setErrors({
           username: "Invalid username",
@@ -53,7 +53,16 @@ const Signup = () => {
           password: "Invalid username or password",
         });
       } else {
-        navigate("/login");
+        const loginstatus = await login(username, password);
+        if (loginstatus === 401) {
+          console.log("Unauthorized");
+          formik.setErrors({
+            username: "Invalid username or password",
+            password: "Invalid username or password",
+          });
+        } else {
+          navigate("/");
+        }
       }
     },
   });
@@ -76,7 +85,7 @@ const Signup = () => {
             pb: 2,
           }}
         >
-          Register
+          Sign up today!
         </Typography>
         <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 1 }}>
           <TextField
@@ -107,12 +116,18 @@ const Signup = () => {
             fullWidth
             id="confirmedPassword"
             name="confirmedPassword"
-            type="confirmedPassword"
-            label="Retype Password"
+            type="password"
+            label="re-enter Password"
             value={formik.values.confirmedPassword}
             onChange={formik.handleChange}
-            error={!!formik.touched.confirmedPassword && !!formik.errors.confirmedPassword}
-            helperText={formik.touched.confirmedPassword && formik.errors.confirmedPassword}
+            error={
+              !!formik.touched.confirmedPassword &&
+              !!formik.errors.confirmedPassword
+            }
+            helperText={
+              formik.touched.confirmedPassword &&
+              formik.errors.confirmedPassword
+            }
           ></TextField>
           <Button type="submit" fullWidth variant="contained" sx={{ my: 3 }}>
             SIgn up

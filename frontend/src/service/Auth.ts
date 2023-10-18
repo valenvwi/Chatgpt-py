@@ -7,7 +7,7 @@ type AuthProps = {
   isLoggedIn: boolean;
   logout: () => void;
   refreshAccessToken: () => Promise<void>;
-  register: (username: string, password: string) => Promise<any>;
+  signup: (username: string, password: string) => Promise<any>;
   createAxiosWithInterceptor: () => AxiosInstance;
 }
 
@@ -74,7 +74,7 @@ export function useAuth(): AuthProps {
         }
     }
 
-    const register = async (username: string, password: string) =>{
+    const signup = async (username: string, password: string) =>{
         try {
             const response = await axios.post(
                 "http://127.0.0.1:8000/api/register/", {
@@ -141,6 +141,6 @@ export function useAuth(): AuthProps {
         return jwtAxios;
       };
 
-    return {login, isLoggedIn, logout, refreshAccessToken, register, createAxiosWithInterceptor}
+    return {login, isLoggedIn, logout, refreshAccessToken, signup, createAxiosWithInterceptor}
 
 }
