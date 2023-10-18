@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import AuthenticationFailed, ValidationError
 import openai
 import os
 from dotenv import load_dotenv
@@ -9,6 +10,7 @@ from user.models import User
 
 
 from .models import Chat, Message
+from .schema import chat_list_docs
 from .serializers import (
     ChatMessageSerializer,
     ChatResponseSerializer,
@@ -24,6 +26,7 @@ openai.api_key = os.environ.get("OPENAI_API_KEY")
 class ChatGPT(APIView):
     # permission_classes = [IsAuthenticated]
     # print("authenticated status: ",IsAuthenticated)
+
 
     def post(self, request, format=None):
         serializer = ChatMessageSerializer(data=request.data)
@@ -80,13 +83,27 @@ class ChatGPT(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @chat_list_docs
     def get(self, request, chat_id=None, format=None):
         if chat_id:
             chat = Chat.objects.get(pk=chat_id)
             messages = Message.objects.filter(chat=chat).order_by('timestamp')
             serializer = MessageSerializer(messages, many=True)
             return Response(serializer.data)
+
         else:
-            chats = Chat.objects.all().order_by('-created_at')
+            if "by_userId" in request.query_params:
+                # if request.user.is_authenticated:
+                # serializer = ChatMessageSerializer(data=request.data)
+                # owner_id = serializer.validated_data.get('owner', None)
+                # print("ownerid: ", owner_id)
+                # owner = User.objects.get(id=owner_id)
+                ownerId = request.query_params.get("by_userId")
+                chats = Chat.objects.filter(owner=ownerId).order_by('-created_at')
+            #     else:
+            #         return Response({"detail": "Authentication required."}, status=401)
+            # else:
+            #     chats = Chat.objects.all().order_by('-created_at')
+
             serializer = ChatSerializer(chats, many=True)
             return Response(serializer.data)

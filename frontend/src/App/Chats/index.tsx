@@ -29,12 +29,13 @@ const Chats = () => {
   const [inputMessage, setInputMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [aiTyping, setAiTyping] = useState(false);
-  // const [userId, setUserId] = useState<string>();
+  const [userId, setUserId] = useState<string>();
 
   // useEffect(() => {
   //   const userId = localStorage.getItem("user_id");
   //   if (userId) {
   //     setUserId(localStorage.getItem("user_id"));
+  //     console.log(userId);
   //   }
   // },[]);
 
@@ -60,8 +61,10 @@ const Chats = () => {
   };
 
   const fetchChats = async () => {
+    const userId = localStorage.getItem("user_id");
     try {
-      const response = await axios.get(`${baseURL}/chats/`);
+      const response = await axios.get(`${baseURL}/chats/?by_userId=${userId}`, {
+      });
       setChats(response.data);
       console.log(`Using fetchChats: ${response.data}`);
     } catch (error) {
@@ -86,7 +89,6 @@ const Chats = () => {
       {
         content: inputMessage,
         role: "user",
-        // owner: localStorage.getItem("user_id")
       },
     ]);
     setInputMessage("");
