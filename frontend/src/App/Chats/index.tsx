@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import NavbarLeft from "./NavbarLeft";
 import ChatBox from "./ChatBox";
-import NewChat from "./NewChat";
-import { styled } from "@mui/material";
+import { styled, useTheme } from "@mui/material";
 import Header from "./Header";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
-type MessageData = { content: string; role: string; owner: string | null };
+type MessageData = { content: string; role: string };
 
 const Container = styled("div")({
   display: "flex",
@@ -18,6 +18,7 @@ const Content = styled("div")({
   flexGrow: 1,
   display: "flex",
   backgroundColor: "#eeeeee",
+  position: "relative",
 });
 
 const Chats = () => {
@@ -29,15 +30,6 @@ const Chats = () => {
   const [inputMessage, setInputMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [aiTyping, setAiTyping] = useState(false);
-  const [userId, setUserId] = useState<string>();
-
-  // useEffect(() => {
-  //   const userId = localStorage.getItem("user_id");
-  //   if (userId) {
-  //     setUserId(localStorage.getItem("user_id"));
-  //     console.log(userId);
-  //   }
-  // },[]);
 
 
   useEffect(() => {
@@ -63,8 +55,10 @@ const Chats = () => {
   const fetchChats = async () => {
     const userId = localStorage.getItem("user_id");
     try {
-      const response = await axios.get(`${baseURL}/chats/?by_userId=${userId}`, {
-      });
+      const response = await axios.get(
+        `${baseURL}/chats/?by_userId=${userId}`,
+        {}
+      );
       setChats(response.data);
       console.log(`Using fetchChats: ${response.data}`);
     } catch (error) {
@@ -143,20 +137,26 @@ const Chats = () => {
     }
   };
 
-  // if (chats.length === 0) {
-  //   return (
-  //     <Container>
-  //       <Header />
-  //       <NewChat createNewChat={createNewChat} />
-  //     </Container>
-  //   );
-  // }
+
+  const [navbarExpanded, setNavbarExpanded] = useState(false);
+  const theme = useTheme();
+  const isBigScreen = useMediaQuery(theme.breakpoints.up("sm"));
 
   return (
     <Container>
-      <Header />
+      <Header
+        showButton={!isBigScreen}
+        onMenuClick={() => setNavbarExpanded((previousValue) => !previousValue)}
+      />
       <Content>
-        <NavbarLeft chats={chats} chatId={chatId} setChatId={setChatId} createNewChat={createNewChat} />
+        {(navbarExpanded || isBigScreen) && (
+          <NavbarLeft
+            chats={chats}
+            chatId={chatId}
+            setChatId={setChatId}
+            createNewChat={createNewChat}
+          />
+        )}
         <ChatBox
           messages={messages}
           inputMessage={inputMessage}

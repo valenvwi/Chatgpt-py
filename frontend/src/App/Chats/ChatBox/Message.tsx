@@ -32,14 +32,6 @@ const Message = ({ message }: Props) => {
   return (
     <AssistantMessageContainer>{message.content}</AssistantMessageContainer>
   );
-  // return (
-  //   <div
-  //     className={`message ${message.role === "user" ? "user" : "assistant"}`}
-  //     dangerouslySetInnerHTML={{
-  //       __html: formatMessageContent(message.content),
-  //     }}
-  //   />
-  // );
 };
 
 export default Message;

@@ -7,7 +7,6 @@ import {
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import Message from "./Message";
-import { useEffect, useState } from "react";
 
 type MessageData = {
   content: string;
