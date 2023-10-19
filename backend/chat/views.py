@@ -34,12 +34,6 @@ class ChatGPT(APIView):
             request_message = serializer.validated_data.get('message', None)
             chat_id = serializer.validated_data.get('chat_id', None)
 
-            print(request_message)
-            print("Api key: ",openai.api_key)
-            print("Chat id: ",chat_id)
-
-            print("Request user: ",request)
-
             if chat_id:
                 chat = Chat.objects.get(id=chat_id)
             else:
@@ -54,7 +48,6 @@ class ChatGPT(APIView):
 
             user_message_obj = Message(content=request_message, role=Message.Role.USER, chat=chat)
             user_message_obj.save()
-            print("User message object:", user_message_obj )
 
             messages = Message.objects.filter(chat=chat).order_by('timestamp')
             message_list = []
@@ -63,16 +56,13 @@ class ChatGPT(APIView):
                 message_list.append({"role": role, "content": message.content})
 
             message_list.append({"role": "user", "content": request_message})
-            print("Message list: ",message_list)
 
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=message_list
             )
 
-            print(response)
             ai_message = response.choices[0].message['content'].strip()
-            print(ai_message)
 
             ai_message_obj = Message(content=ai_message, role=Message.Role.ASSISTANT, chat=chat)
             ai_message_obj.save()
@@ -93,17 +83,9 @@ class ChatGPT(APIView):
 
         else:
             if "by_userId" in request.query_params:
-                # if request.user.is_authenticated:
-                # serializer = ChatMessageSerializer(data=request.data)
-                # owner_id = serializer.validated_data.get('owner', None)
-                # print("ownerid: ", owner_id)
-                # owner = User.objects.get(id=owner_id)
                 ownerId = request.query_params.get("by_userId")
                 chats = Chat.objects.filter(owner=ownerId).order_by('-created_at')
-            #     else:
-            #         return Response({"detail": "Authentication required."}, status=401)
-            # else:
-            #     chats = Chat.objects.all().order_by('-created_at')
+
 
             serializer = ChatSerializer(chats, many=True)
             return Response(serializer.data)
