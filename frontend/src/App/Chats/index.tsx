@@ -94,6 +94,7 @@ const Chats = () => {
         try {
           const response = await axios.post(`${baseURL}/chats/`, {
             chat_id: chatId || undefined,
+            owner: localStorage.getItem("user_id"),
             message: inputMessage,
           });
           console.log(response);
