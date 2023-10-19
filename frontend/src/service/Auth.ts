@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from "axios";
+import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -8,7 +8,6 @@ type AuthProps = {
   logout: () => void;
   refreshAccessToken: () => Promise<void>;
   signup: (username: string, password: string) => Promise<any>;
-  createAxiosWithInterceptor: () => AxiosInstance;
 };
 
 export function useAuth(): AuthProps {
@@ -111,44 +110,11 @@ export function useAuth(): AuthProps {
     }
   };
 
-  const createAxiosWithInterceptor = () => {
-    const jwtAxios = axios.create({});
-
-    jwtAxios.interceptors.response.use(
-      (response) => {
-        return response;
-      },
-      async (error) => {
-        const originalRequest = error.config;
-        if (error.response.status === 401 || error.response.status === 403) {
-          axios.defaults.withCredentials = true;
-
-          try {
-            const response = await axios.post(
-              "http://127.0.0.1:8000/api/token/refresh/"
-            );
-            if (response["status"] == 200) {
-              return jwtAxios(originalRequest);
-            }
-          } catch (refreshError) {
-            logout();
-            const goLogin = () => navigate("/login");
-            goLogin();
-            return Promise.reject(refreshError);
-          }
-        }
-        return Promise.reject(error);
-      }
-    );
-    return jwtAxios;
-  };
-
   return {
     login,
     isLoggedIn,
     logout,
     refreshAccessToken,
     signup,
-    createAxiosWithInterceptor,
   };
 }
