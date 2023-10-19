@@ -24,7 +24,7 @@ const Content = styled("div")({
 const Chats = () => {
   const baseURL = "http://localhost:8000/api";
 
-  const [chats, setChats] = useState<{ id: string }[]>([]);
+  const [chats, setChats] = useState<{ id: string, created_at: Date }[]>([]);
   const [chatId, setChatId] = useState<string>();
   const [messages, setMessages] = useState<MessageData[]>([]);
   const [inputMessage, setInputMessage] = useState("");
@@ -60,7 +60,6 @@ const Chats = () => {
         {}
       );
       setChats(response.data);
-      console.log(`Using fetchChats: ${response.data}`);
     } catch (error) {
       console.error("Error fetching chats:", error);
     }
@@ -77,7 +76,6 @@ const Chats = () => {
   };
 
   const sendMessage = async () => {
-    // Update the local state before sending the message to the backend
     setMessages([
       ...messages,
       {
