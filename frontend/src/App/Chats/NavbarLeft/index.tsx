@@ -9,6 +9,7 @@ const StyledList = styled(List)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   borderRadius: theme.spacing(1),
   border: "1px solid rgba(0, 0, 0, 0.12)",
+  flexShrink: 0,
   [theme.breakpoints.down("sm")]: {
     position: "absolute",
     top: 0,

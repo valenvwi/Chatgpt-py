@@ -11,7 +11,7 @@ const UserMessageContainer = styled(Paper)({
   padding: "16px",
   alignSelf: "flex-end",
 
-  marginLeft: "16px",
+  marginLeft: "32px",
 });
 
 const AssistantMessageContainer = styled(Paper)({
@@ -19,7 +19,7 @@ const AssistantMessageContainer = styled(Paper)({
   flexDirection: "column",
   padding: "16px",
   alignSelf: "flex-start",
-  marginRight: "16px",
+  marginRight: "32px",
   backgroundColor: "#e5faff",
 });
 
