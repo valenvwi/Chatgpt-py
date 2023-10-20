@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
-import chat.views as views
+from chat.views import ChatListView, ChatMessageView
 from rest_framework.routers import DefaultRouter
 from user.views import (
     JWTCookieTokenObtainPairView,
@@ -22,8 +22,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/docs/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api/docs/schema/ui/", SpectacularSwaggerView.as_view()),
-    path('api/chats/', views.ChatGPT.as_view(), name='chat_history'),
-    path('api/chats/<str:chat_id>/', views.ChatGPT.as_view(), name='chat_messages'),
+    path('api/chats/', ChatListView.as_view(), name='chat_history'),
+    path('api/chats/<str:chat_id>/', ChatMessageView.as_view(), name='chat_messages'),
     path("api/token/", JWTCookieTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", JWTCookieTokenRefreshView.as_view(), name="token_refresh"),
     path("api/logout/", LogOutAPIView.as_view(), name="logout"),

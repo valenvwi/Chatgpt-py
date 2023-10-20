@@ -90,7 +90,7 @@ const Chats = () => {
       const delay = 1000 + Math.random() * 1000;
       setTimeout(async () => {
         try {
-          const response = await axios.post(`${baseURL}/chats/`, {
+          const response = await axios.post(`${baseURL}/chats/${chatId}/`, {
             chat_id: chatId || undefined,
             owner: localStorage.getItem("user_id"),
             message: inputMessage,
@@ -134,6 +134,8 @@ const Chats = () => {
     } catch (error) {
       console.error("Error creating a new chat:", error);
     }
+
+    fetchChats();
   };
 
 

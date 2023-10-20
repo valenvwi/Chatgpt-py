@@ -23,12 +23,42 @@ openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 
 # https://pypi.org/project/openai/
-class ChatGPT(APIView):
+
+class ChatListView(APIView):
+    # permission_classes = [IsAuthenticated]
+
+    @chat_list_docs
+    def get(self, request, chat_id=None, format=None):
+        ownerId = request.query_params.get("by_userId")
+        chats = Chat.objects.filter(owner=ownerId).order_by('-created_at')
+
+        serializer = ChatSerializer(chats, many=True)
+        return Response(serializer.data)
+
+    def post(self,request, format=None):
+        serializer = ChatSerializer(data=request.data)
+        if serializer.is_valid():
+            owner = serializer.validated_data.get('owner', None)
+            chat = Chat.objects.create(owner=owner)
+            chat.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+
+class ChatMessageView(APIView):
     # permission_classes = [IsAuthenticated]
     # print("authenticated status: ",IsAuthenticated)
 
+    def get(self, request, chat_id=None, format=None):
+        if chat_id:
+            chat = Chat.objects.get(pk=chat_id)
+            messages = Message.objects.filter(chat=chat).order_by('timestamp')
+            print(messages)
+            serializer = MessageSerializer(messages, many=True)
+            return Response(serializer.data)
 
-    def post(self, request, format=None):
+    def post(self, request, chat_id=None, format=None):
         serializer = ChatMessageSerializer(data=request.data)
         if serializer.is_valid():
             request_message = serializer.validated_data.get('message', None)
@@ -36,6 +66,7 @@ class ChatGPT(APIView):
 
             if chat_id:
                 chat = Chat.objects.get(id=chat_id)
+                print("Chat: ",chat)
             else:
                 owner_id = serializer.validated_data.get('owner', None)
                 owner = User.objects.get(id=owner_id)
@@ -48,6 +79,7 @@ class ChatGPT(APIView):
 
             user_message_obj = Message(content=request_message, role=Message.Role.USER, chat=chat)
             user_message_obj.save()
+            print("User Message: ",user_message_obj)
 
             messages = Message.objects.filter(chat=chat).order_by('timestamp')
             message_list = []
@@ -56,6 +88,7 @@ class ChatGPT(APIView):
                 message_list.append({"role": role, "content": message.content})
 
             message_list.append({"role": "user", "content": request_message})
+            print("Message List append: ",message_list)
 
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
@@ -72,20 +105,3 @@ class ChatGPT(APIView):
                 return Response({"message": response_serializer.validated_data["message"], "chat_id": chat.id})
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @chat_list_docs
-    def get(self, request, chat_id=None, format=None):
-        if chat_id:
-            chat = Chat.objects.get(pk=chat_id)
-            messages = Message.objects.filter(chat=chat).order_by('timestamp')
-            serializer = MessageSerializer(messages, many=True)
-            return Response(serializer.data)
-
-        else:
-            if "by_userId" in request.query_params:
-                ownerId = request.query_params.get("by_userId")
-                chats = Chat.objects.filter(owner=ownerId).order_by('-created_at')
-
-
-            serializer = ChatSerializer(chats, many=True)
-            return Response(serializer.data)
