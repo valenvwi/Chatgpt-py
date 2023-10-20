@@ -6,6 +6,8 @@ import { styled, useTheme } from "@mui/material";
 import Header from "./Header";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
+axios.defaults.withCredentials = true;
+
 type MessageData = { content: string; role: string };
 
 const Container = styled("div")({
@@ -19,18 +21,18 @@ const Content = styled("div")({
   display: "flex",
   backgroundColor: "#eeeeee",
   position: "relative",
+  overflow: "hidden",
 });
 
 const Chats = () => {
   const baseURL = "http://localhost:8000/api";
 
-  const [chats, setChats] = useState<{ id: string, created_at: Date }[]>([]);
+  const [chats, setChats] = useState<{ id: string; created_at: Date }[]>([]);
   const [chatId, setChatId] = useState<string>();
   const [messages, setMessages] = useState<MessageData[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [aiTyping, setAiTyping] = useState(false);
-
 
   useEffect(() => {
     fetchChats();
@@ -55,10 +57,7 @@ const Chats = () => {
   const fetchChats = async () => {
     const userId = localStorage.getItem("user_id");
     try {
-      const response = await axios.get(
-        `${baseURL}/chats/?by_userId=${userId}`,
-        {}
-      );
+      const response = await axios.get(`${baseURL}/chats/?by_userId=${userId}`);
       setChats(response.data);
     } catch (error) {
       console.error("Error fetching chats:", error);
@@ -127,17 +126,12 @@ const Chats = () => {
       const response = await axios.post(`${baseURL}/chats/`, {
         owner: localStorage.getItem("user_id"),
       });
-      const newChat = response.data;
-
-      setChats([newChat, ...chats]);
-      setChatId(newChat.id);
+      console.log(response);
     } catch (error) {
       console.error("Error creating a new chat:", error);
     }
-
     fetchChats();
   };
-
 
   const [navbarExpanded, setNavbarExpanded] = useState(false);
   const theme = useTheme();

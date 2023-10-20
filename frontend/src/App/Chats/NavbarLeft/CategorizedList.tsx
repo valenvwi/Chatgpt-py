@@ -12,6 +12,8 @@ type Props = {
 };
 
 const CategorizedList = ({ title, chatList, setChatId }: Props) => {
+  console.log('Using CategorizedList:', chatList);
+
   return (
     <>
       <ListItem sx={{ mt: 1 }}>

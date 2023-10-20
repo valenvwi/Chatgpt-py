@@ -1,6 +1,6 @@
 import { Divider, List, ListItem, ListItemButton, styled } from "@mui/material";
 import AddBoxIcon from "@mui/icons-material/AddBox";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import * as dayjs from "dayjs";
 import CategorizedList from "./CategorizedList";
 
@@ -10,6 +10,7 @@ const StyledList = styled(List)(({ theme }) => ({
   borderRadius: theme.spacing(1),
   border: "1px solid rgba(0, 0, 0, 0.12)",
   flexShrink: 0,
+  overflowY: "auto",
   [theme.breakpoints.down("sm")]: {
     position: "absolute",
     top: 0,
@@ -58,17 +59,19 @@ const categorizeChats = (chats: { id: string; created_at: Date }[]) => {
 };
 
 const NavbarLeft = ({ chats, setChatId, createNewChat }: Props) => {
-  const [categorizedChats, setCategorizedChats] = useState({
-    todayChats: [],
-    yesterdayChats: [],
-    thisMonthChats: [],
-    olderChats: [],
-  });
+  // const [categorizedChats, setCategorizedChats] = useState({
+  //   todayChats: [],
+  //   yesterdayChats: [],
+  //   thisMonthChats: [],
+  //   olderChats: [],
+  // });
 
-  useEffect(() => {
-    const categorized = categorizeChats(chats);
-    setCategorizedChats(categorized);
-  }, [chats]);
+  // useEffect(() => {
+  //   const categorized = categorizeChats(chats);
+  //   setCategorizedChats(categorized);
+  // }, [chats]);
+
+  const categorizedChats = useMemo(() => categorizeChats(chats), [chats]);
 
   return (
     <StyledList>

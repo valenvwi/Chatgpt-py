@@ -38,6 +38,7 @@ class RegisterView(APIView):
 class LogOutAPIView(APIView):
     def post(self, request, format=None):
         response = Response("Logged out successfully")
+        print("Log out response", response)
 
         response.set_cookie("refresh_token", "", expires=0)
         response.set_cookie("access_token", "", expires=0)
@@ -46,8 +47,8 @@ class LogOutAPIView(APIView):
 
 
 class UserViewSet(viewsets.ViewSet):
-    queryset = User.objects.all()
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
+    print("permission_classes: ", permission_classes)
 
     @user_list_docs
     def list(self, request):

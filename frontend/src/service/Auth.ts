@@ -26,12 +26,14 @@ export function useAuth(): AuthProps {
     try {
       const userId = localStorage.getItem("user_id");
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/users/?user_id=${userId}`,
+        `http://localhost:8000/api/users/?user_id=${userId}`,
+
         {
           withCredentials: true,
         }
       );
       const userDetails = response.data;
+      console.log("User details: " + userDetails);
       localStorage.setItem("username", userDetails.username);
       setIsLoggedIn(true);
       localStorage.setItem("isLoggedIn", "true");
@@ -45,7 +47,7 @@ export function useAuth(): AuthProps {
   const login = async (username: string, password: string) => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/token/",
+        "http://localhost:8000/api/token/",
         {
           username,
           password,
@@ -57,6 +59,8 @@ export function useAuth(): AuthProps {
       console.log(response.data);
       localStorage.setItem("isLoggedIn", "true");
       localStorage.setItem("user_id", user_id);
+      // localStorage.setItem("access_token", response.data.access);
+      // localStorage.setItem("refresh_token", response.data.access);
       setIsLoggedIn(true);
       getUserDetails();
     } catch (err: any) {
@@ -67,7 +71,7 @@ export function useAuth(): AuthProps {
   const refreshAccessToken = async () => {
     try {
       await axios.post(
-        `http://127.0.0.1:8000/api/token/refresh/`,
+        `http://localhost:8000/api/token/refresh/`,
         {},
         { withCredentials: true }
       );
@@ -79,7 +83,7 @@ export function useAuth(): AuthProps {
   const signup = async (username: string, password: string) => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/register/",
+        "http://localhost:8000/api/register/",
         {
           username,
           password,
@@ -101,7 +105,7 @@ export function useAuth(): AuthProps {
 
     try {
       await axios.post(
-        `http://127.0.0.1:8000/api/logout/`,
+        `http://localhost:8000/api/logout/`,
         {},
         { withCredentials: true }
       );

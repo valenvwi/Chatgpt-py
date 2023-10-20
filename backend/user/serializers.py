@@ -37,16 +37,19 @@ class UserSerializer(serializers.ModelSerializer):
         return obj.id
 
 
+# https://django-rest-framework-simplejwt.readthedocs.io/en/latest/creating_tokens_manually.html
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
-        token["example"] = "example"
+        token["username"] = user.username
+        # print("Token in customtokenobtainpairserializer: ", token)
 
         return token
 
     def validate(self, attrs):
         data = super().validate(attrs)
         data["user_id"] = self.user.id
+        # print("Data in customtokenobtainpairserializer: ", data)
         return data
 
 

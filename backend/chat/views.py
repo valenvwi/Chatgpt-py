@@ -2,7 +2,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import AuthenticationFailed, ValidationError
 import openai
 import os
 from dotenv import load_dotenv
@@ -25,12 +24,12 @@ openai.api_key = os.environ.get("OPENAI_API_KEY")
 # https://pypi.org/project/openai/
 
 class ChatListView(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     @chat_list_docs
     def get(self, request, chat_id=None, format=None):
-        ownerId = request.query_params.get("by_userId")
-        chats = Chat.objects.filter(owner=ownerId).order_by('-created_at')
+        user = request.user.id
+        chats = Chat.objects.filter(owner=user).order_by('-created_at')
 
         serializer = ChatSerializer(chats, many=True)
         return Response(serializer.data)
@@ -38,8 +37,8 @@ class ChatListView(APIView):
     def post(self,request, format=None):
         serializer = ChatSerializer(data=request.data)
         if serializer.is_valid():
-            owner = serializer.validated_data.get('owner', None)
-            chat = Chat.objects.create(owner=owner)
+            user = request.user
+            chat = Chat.objects.create(owner=user)
             chat.save()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -47,14 +46,12 @@ class ChatListView(APIView):
 
 
 class ChatMessageView(APIView):
-    # permission_classes = [IsAuthenticated]
-    # print("authenticated status: ",IsAuthenticated)
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, chat_id=None, format=None):
         if chat_id:
             chat = Chat.objects.get(pk=chat_id)
             messages = Message.objects.filter(chat=chat).order_by('timestamp')
-            print(messages)
             serializer = MessageSerializer(messages, many=True)
             return Response(serializer.data)
 
@@ -68,10 +65,8 @@ class ChatMessageView(APIView):
                 chat = Chat.objects.get(id=chat_id)
                 print("Chat: ",chat)
             else:
-                owner_id = serializer.validated_data.get('owner', None)
-                owner = User.objects.get(id=owner_id)
-                print("Owner: ",owner)
-                chat = Chat.objects.create(owner=owner)
+                user = request.user
+                chat = Chat.objects.create(owner=user)
 
             if not request_message:
                 serializer = ChatSerializer(chat)
