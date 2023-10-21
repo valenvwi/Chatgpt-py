@@ -5,6 +5,7 @@ import ChatBox from "./ChatBox";
 import { styled, useTheme } from "@mui/material";
 import Header from "./Header";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { BASEURL } from "../../config";
 
 axios.defaults.withCredentials = true;
 
@@ -25,7 +26,6 @@ const Content = styled("div")({
 });
 
 const Chats = () => {
-  const baseURL = "http://localhost:8000/api";
 
   const [chats, setChats] = useState<{ id: string; created_at: Date }[]>([]);
   const [chatId, setChatId] = useState<string>();
@@ -57,7 +57,7 @@ const Chats = () => {
   const fetchChats = async () => {
     const userId = localStorage.getItem("user_id");
     try {
-      const response = await axios.get(`${baseURL}/chats/?by_userId=${userId}`);
+      const response = await axios.get(`${BASEURL}/chats/?by_userId=${userId}`);
       setChats(response.data);
     } catch (error) {
       console.error("Error fetching chats:", error);
@@ -66,7 +66,7 @@ const Chats = () => {
 
   const fetchMessages = async (chatId: string) => {
     try {
-      const response = await axios.get(`${baseURL}/chats/${chatId}/`);
+      const response = await axios.get(`${BASEURL}/chats/${chatId}/`);
       setMessages(response.data);
       console.log(`Using fetchMessages: ${response.data}`);
     } catch (error) {
@@ -89,7 +89,7 @@ const Chats = () => {
       const delay = 1000 + Math.random() * 1000;
       setTimeout(async () => {
         try {
-          const response = await axios.post(`${baseURL}/chats/${chatId}/`, {
+          const response = await axios.post(`${BASEURL}/chats/${chatId}/`, {
             chat_id: chatId || undefined,
             owner: localStorage.getItem("user_id"),
             message: inputMessage,
@@ -98,7 +98,8 @@ const Chats = () => {
 
           if (!chatId) {
             setChatId(response.data.chat_id);
-            setChats([{ id: response.data.chat_id }, ...chats]);
+            setChats([{ id: response.data.chat_id,
+              created_at: response.data.created_at }, ...chats]);
           } else {
             fetchMessages(chatId);
           }
@@ -123,7 +124,7 @@ const Chats = () => {
 
   const createNewChat = async () => {
     try {
-      const response = await axios.post(`${baseURL}/chats/`, {
+      const response = await axios.post(`${BASEURL}/chats/`, {
         owner: localStorage.getItem("user_id"),
       });
       console.log(response);

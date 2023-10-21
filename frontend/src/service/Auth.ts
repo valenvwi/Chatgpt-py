@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { BASEURL } from "../config";
 
 type AuthProps = {
   login: (username: string, password: string) => any;
@@ -26,7 +27,7 @@ export function useAuth(): AuthProps {
     try {
       const userId = localStorage.getItem("user_id");
       const response = await axios.get(
-        `http://localhost:8000/api/users/?user_id=${userId}`,
+        `${BASEURL}/users/?user_id=${userId}`,
 
         {
           withCredentials: true,
@@ -47,7 +48,7 @@ export function useAuth(): AuthProps {
   const login = async (username: string, password: string) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/token/",
+        `${BASEURL}/token/`,
         {
           username,
           password,
@@ -59,8 +60,6 @@ export function useAuth(): AuthProps {
       console.log(response.data);
       localStorage.setItem("isLoggedIn", "true");
       localStorage.setItem("user_id", user_id);
-      // localStorage.setItem("access_token", response.data.access);
-      // localStorage.setItem("refresh_token", response.data.access);
       setIsLoggedIn(true);
       getUserDetails();
     } catch (err: any) {
@@ -71,7 +70,7 @@ export function useAuth(): AuthProps {
   const refreshAccessToken = async () => {
     try {
       await axios.post(
-        `http://localhost:8000/api/token/refresh/`,
+        `${BASEURL}/token/refresh/`,
         {},
         { withCredentials: true }
       );
@@ -83,7 +82,7 @@ export function useAuth(): AuthProps {
   const signup = async (username: string, password: string) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/register/",
+        `${BASEURL}/register/`,
         {
           username,
           password,
@@ -105,7 +104,7 @@ export function useAuth(): AuthProps {
 
     try {
       await axios.post(
-        `http://localhost:8000/api/logout/`,
+        `${BASEURL}/logout/`,
         {},
         { withCredentials: true }
       );
