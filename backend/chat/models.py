@@ -5,7 +5,7 @@ from user.models import User
 
 class Chat(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="chat_owner")
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="chats")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
