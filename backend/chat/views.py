@@ -73,7 +73,7 @@ class ChatMessageView(APIView):
             user_message_obj.save()
 
             messages = Message.objects.filter(chat=chat).order_by('timestamp')
-            # print("Messages: ",messages)
+            print("Messages: ",messages)
             message_list = []
             for message in messages:
                 message_list.append({"role": message.role, "content": message.content})
@@ -85,7 +85,7 @@ class ChatMessageView(APIView):
                 messages=message_list
             )
 
-            # print("AI Message response: ",response)
+            print("AI Message response: ",response)
 
             ai_message = response.choices[0].message.content.strip()
 

@@ -1,13 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import axios from "axios";
 import NavbarLeft from "./NavbarLeft";
 import ChatBox from "./ChatBox";
 import { styled, useTheme } from "@mui/material";
 import Header from "./Header";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { BASEURL } from "../../config";
-
-axios.defaults.withCredentials = true;
+import useAxiosWithJwtInterceptor from "../../helpers/jwtinterceptor";
 
 type MessageData = { content: string; role: string };
 
@@ -26,13 +24,14 @@ const Content = styled("div")({
 });
 
 const Chats = () => {
-
   const [chats, setChats] = useState<{ id: string; created_at: Date }[]>([]);
   const [chatId, setChatId] = useState<string>();
   const [messages, setMessages] = useState<MessageData[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [aiTyping, setAiTyping] = useState(false);
+
+  const jwtAxios = useAxiosWithJwtInterceptor();
 
   useEffect(() => {
     fetchChats();
@@ -57,7 +56,7 @@ const Chats = () => {
   const fetchChats = async () => {
     const userId = localStorage.getItem("user_id");
     try {
-      const response = await axios.get(`${BASEURL}/chats/?by_userId=${userId}`);
+      const response = await jwtAxios.get(`${BASEURL}/chats/?by_userId=${userId}`);
       setChats(response.data);
     } catch (error) {
       console.error("Error fetching chats:", error);
@@ -66,7 +65,7 @@ const Chats = () => {
 
   const fetchMessages = async (chatId: string) => {
     try {
-      const response = await axios.get(`${BASEURL}/chats/${chatId}/`);
+      const response = await jwtAxios.get(`${BASEURL}/chats/${chatId}/`);
       setMessages(response.data);
       console.log(`Using fetchMessages: ${response.data}`);
     } catch (error) {
@@ -89,7 +88,7 @@ const Chats = () => {
       const delay = 1000 + Math.random() * 1000;
       setTimeout(async () => {
         try {
-          const response = await axios.post(`${BASEURL}/chats/${chatId}/`, {
+          const response = await jwtAxios.post(`${BASEURL}/chats/${chatId}/`, {
             chat_id: chatId || undefined,
             owner: localStorage.getItem("user_id"),
             message: inputMessage,
@@ -124,7 +123,7 @@ const Chats = () => {
 
   const createNewChat = async () => {
     try {
-      const response = await axios.post(`${BASEURL}/chats/`, {
+      const response = await jwtAxios.post(`${BASEURL}/chats/`, {
         owner: localStorage.getItem("user_id"),
       });
       console.log(response);

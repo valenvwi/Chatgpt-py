@@ -57,6 +57,7 @@ class JWTCookieTokenRefreshSerializer(TokenRefreshSerializer):
         attrs["refresh"] = self.context["request"].COOKIES.get(settings.SIMPLE_JWT["REFRESH_TOKEN_NAME"])
 
         if attrs["refresh"]:
+            print("attrs in jwttokenrefreshserializer: ", attrs)
             return super().validate(attrs)
         else:
             raise InvalidToken("No valid refresh token found")

@@ -7,7 +7,6 @@ type AuthProps = {
   login: (username: string, password: string) => any;
   isLoggedIn: boolean;
   logout: () => void;
-  refreshAccessToken: () => Promise<void>;
   signup: (username: string, password: string) => Promise<any>;
 };
 
@@ -67,17 +66,6 @@ export function useAuth(): AuthProps {
     }
   };
 
-  const refreshAccessToken = async () => {
-    try {
-      await axios.post(
-        `${BASEURL}/token/refresh/`,
-        {},
-        { withCredentials: true }
-      );
-    } catch (refreshError) {
-      return Promise.reject(refreshError);
-    }
-  };
 
   const signup = async (username: string, password: string) => {
     try {
@@ -117,7 +105,6 @@ export function useAuth(): AuthProps {
     login,
     isLoggedIn,
     logout,
-    refreshAccessToken,
     signup,
   };
 }
