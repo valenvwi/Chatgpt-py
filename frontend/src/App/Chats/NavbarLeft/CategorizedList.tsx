@@ -12,7 +12,7 @@ type Props = {
 };
 
 const CategorizedList = ({ title, chatList, setChatId }: Props) => {
-  console.log('Using CategorizedList:', chatList);
+  // console.log('Using CategorizedList:', chatList);
 
   return (
     <>

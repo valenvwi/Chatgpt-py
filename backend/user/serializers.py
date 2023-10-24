@@ -28,13 +28,10 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    id = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = User
         fields = ("username","id")
 
-    def get_id(self, obj):
-        return obj.id
 
 
 # https://django-rest-framework-simplejwt.readthedocs.io/en/latest/creating_tokens_manually.html

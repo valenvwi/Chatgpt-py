@@ -27,7 +27,7 @@ export function useAuth(): AuthProps {
     try {
       const userId = localStorage.getItem("user_id");
       const response = await axios.get(
-        `${BASEURL}/users/?user_id=${userId}`,
+        `${BASEURL}/users/${userId}`,
 
         {
           withCredentials: true,

@@ -6,7 +6,6 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from .models import User
-from .schemas import user_list_docs
 from .serializers import (
     UserSerializer,
     CustomTokenObtainPairSerializer,
@@ -46,16 +45,11 @@ class LogOutAPIView(APIView):
         return response
 
 
-class UserViewSet(viewsets.ViewSet):
+class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     print("permission_classes: ", permission_classes)
-
-    @user_list_docs
-    def list(self, request):
-        user_id = request.query_params.get("user_id")
-        queryset = User.objects.get(id=user_id)
-        serializer = UserSerializer(queryset)
-        return Response(serializer.data)
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
 
 
 class JWTSetCookieMixin:
