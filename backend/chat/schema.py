@@ -10,7 +10,7 @@ chat_list_docs = extend_schema(
             name="by_userId",
             type=OpenApiTypes.NUMBER,
             location=OpenApiParameter.QUERY,
-            description="Filter chats by by_user",
+            description="Filter chats by user id",
         ),
     ],
 )

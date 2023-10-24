@@ -90,7 +90,8 @@ class ChatMessageView(APIView):
                 messages=message_list
             )
 
-            ai_message = response.choices[0].message['content'].strip()
+            print("AI Message response: ",response)
+            ai_message = response.choices[0].message.content
 
             ai_message_obj = Message(content=ai_message, role=Message.Role.ASSISTANT, chat=chat)
             ai_message_obj.save()
