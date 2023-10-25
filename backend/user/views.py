@@ -52,6 +52,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
 
 
+#https://docs.djangoproject.com/en/4.2/ref/request-response/
 class JWTSetCookieMixin:
     def finalize_response(self, request, response, *args, **kwargs):
         if response.data.get("refresh"):
@@ -70,7 +71,6 @@ class JWTSetCookieMixin:
                 httponly=True,
                 samesite=settings.SIMPLE_JWT["JWT_COOKIE_SAMESITE"],
             )
-            del response.data["access"]
 
         return super().finalize_response(request, response, *args, **kwargs)
 

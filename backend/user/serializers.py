@@ -38,15 +38,12 @@ class UserSerializer(serializers.ModelSerializer):
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
-        token["username"] = user.username
-        # print("Token in customtokenobtainpairserializer: ", token)
-
         return token
 
     def validate(self, attrs):
         data = super().validate(attrs)
         data["user_id"] = self.user.id
-        # print("Data in customtokenobtainpairserializer: ", data)
+        print("Data in customtokenobtainpairserializer: ", data)
         return data
 
 

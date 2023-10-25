@@ -33,7 +33,7 @@ export function useAuth(): AuthProps {
         }
       );
       const userDetails = response.data;
-      console.log("User details: " + userDetails);
+      // console.log("User details: " + userDetails);
       localStorage.setItem("username", userDetails.username);
       setIsLoggedIn(true);
       localStorage.setItem("isLoggedIn", "true");

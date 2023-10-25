@@ -67,7 +67,7 @@ const Chats = () => {
     try {
       const response = await jwtAxios.get(`${BASEURL}/chats/${chatId}/`);
       setMessages(response.data);
-      console.log(`Using fetchMessages: ${response.data}`);
+      // console.log(`Using fetchMessages: ${response.data}`);
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
