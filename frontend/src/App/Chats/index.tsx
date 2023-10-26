@@ -30,6 +30,9 @@ const Chats = () => {
   const [inputMessage, setInputMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [aiTyping, setAiTyping] = useState(false);
+  const [navbarExpanded, setNavbarExpanded] = useState(false);
+  const theme = useTheme();
+  const isBigScreen = useMediaQuery(theme.breakpoints.up("sm"));
 
   const jwtAxios = useAxiosWithJwtInterceptor();
 
@@ -133,9 +136,6 @@ const Chats = () => {
     fetchChats();
   };
 
-  const [navbarExpanded, setNavbarExpanded] = useState(false);
-  const theme = useTheme();
-  const isBigScreen = useMediaQuery(theme.breakpoints.up("sm"));
 
   return (
     <Container>

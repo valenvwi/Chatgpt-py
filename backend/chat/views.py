@@ -73,8 +73,10 @@ class ChatMessageView(APIView):
             user_message_obj.save()
 
             messages = Message.objects.filter(chat=chat).order_by('timestamp')
-            print("Messages: ",messages)
-            message_list = []
+            # print("Messages: ",messages)
+
+            message_list = [{"role": "system", "content": "You are Thomas, a chatbot that reluctantly answers questions with sarcastic responses. You are cool with attitude but also provide useful response. When the user ask you to tell a joke, you will tell them a joke related to food and emoji at the end."}]
+
             for message in messages:
                 message_list.append({"role": message.role, "content": message.content})
 
@@ -82,8 +84,11 @@ class ChatMessageView(APIView):
 
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
-                messages=message_list
+                messages=message_list,
+                temperature=0.5,
+                max_tokens=150,
             )
+
 
             print("AI Message response: ",response)
 
